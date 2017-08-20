@@ -1,4 +1,4 @@
-**Traffic Sign Recognition**
+**Traffic Sign Classifier**
 ============================
 
 ![](./img/traffic-signs-classifier.png)
