@@ -7,7 +7,7 @@ Code
 ----
 
 The associated code is located at: [Traffic Sign Classifier Jupyter
-Notebook.](Traffic_Sign_Classifier.ipynb)
+Notebook.](https://github.com/phfrohring/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
 
 Data Set Summary & Exploration
 ------------------------------
