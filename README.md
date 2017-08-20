@@ -217,3 +217,11 @@ imperfect classification: I would not feel safe with this classifier running in
 my car! Since the overfitting is so bad, there is no reason for a finer analysis
 before having more promising results: better to invest time into a better
 preprocessing, and trying out other architectures.
+
+The new images are not numerous nor diverse enough to have any kind of
+significance: it does not mean anything and could even be misleading. The 83%
+accuracy are to be compared with the 4% accuracy on the much bigger and diverse
+testing set and the 94% on the validating set: the model is basically dumb in
+the sense that it does not generalise at all. At best, it works like a
+dictionary, i.e. it overfits the data. Counters measures have been discussed
+above.
