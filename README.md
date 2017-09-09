@@ -1,7 +1,13 @@
-**Traffic Sign Classifier**
+**Traffic Signs Classifier**
 ============================
 
 ![](./img/traffic-signs-classifier.png)
+
+We built a traffic signs classifier using the [German Traffic Sign
+Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=news), deep
+learning and TensorFlow. A 98.9% accuracy has been obtained on the test set
+which is higher than that of humans (98.83%) thanks to ideas
+from [sermanet-ijcnn-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf).
 
 Code
 ----
@@ -12,54 +18,43 @@ Notebook.](https://github.com/phfrohring/CarND-Traffic-Sign-Classifier-Project/b
 Data Set Summary & Exploration
 ------------------------------
 
-Using the NumPy library, we conclude that the images are from the padded [German
-Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=new)
-are 32×32 pixels over three color channels. We count 34799 training examples,
-4410 validation examples and 12630 testing examples. The signs are classified
-into 43 classes.
+-   Images are 32×32 pixels over 3 colours channels : 32×32×3
 
-| Image data shape              | (32, 32, 3) |
-|-------------------------------|-------------|
-| Number of training examples   | 34799       |
-| Number of validation examples | 4410        |
-| Number of testing examples    | 12630       |
-| Number of classes             | 43          |
+-   There are 43 classes of images.
 
-### Distribution
+-   The data set counts 51839 images distributed over 3 subsets: Training,
+    Validation and Test sets.
 
-The classifier should be better than humans across all classes. If it is not, it
-may be because of the uneven dataset across classes. The classifier is a mere
-reflection of the dataset. A way to correct this defect may be to generate
-examples for each classes by altering them with noise, rotations, translations,
-... as described in [Sermanet Ijcnn
-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf)so that the
-resulting distribution is less uneven than the original one and with enough
-examples per class for the classifier to learn better.
+-   The Training Set counts 70% of all images, Validation Set 20% and Test Set
+    10%.
 
-Here are the distribution of the examples across the classes for the training,
-validation and test data sets:
+-   The distribution of images across the different classes is uneven:
 
 ![](./img/train-dist.png)
 
-![](./img/valid-dist.png)
-
-![](./img/test-dist.png)
-
-### Visualisation
-
-In all images, the vast majority of pixels are attributed to the signs. It is
-probably useful to preprocess images to make their contrasts roughly equal so
-that the network can focus on what matters: the signs, and not the signs in all
-the different possible contrasts.
+-   In all images, the vast majority of pixels are attributed to the signs.
+    Contrasts, blurring and kinds of noises are uneven:
 
 ![](./img/images-examples.png)
+
+-   We would have a hard time identifying generated images from original images,
+    should we add a few by manipulating contrast, blurring, rotations,
+    translations, and noises:
+
+![](img/images_in_class.png)
+
+ 
+
+ 
 
 Preprocessing
 -------------
 
 We use the [scikit-image](http://scikit-image.or) to preprocess images. The
 preprocessing step consists of 3 transformations: correcting the contrast,
-grayscaling then removing the mean from the images. We did not include the edge
+grayscaling then removing the mean from pixels value. We then generate images to
+have an even distribution of images across classes using translations,
+rotations, blurring and noise on original images. We did not include the edge
 detection data since we judged the data too noisy. The transformations are
 described below.
 
@@ -117,70 +112,137 @@ between pixels, which is preserved by translation:
 A preprocessed image mean = -1.04083408559e-17 ≈ 0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+### Generating images
+
+Here is an example of a rotated, translated image with added gaussian noise:
+
+![](img/tr_image.png)
+
+We apply these ransom transformations on all classes so that they all have the
+same number of images. Compare this distribution of images across classes with
+the one above:
+
+![](img/even_distribution.png)
+
+ 
+
 Model
 -----
 
-![](./img/schema.png)
+![](./img/model.png)
 
 The model is essentially LeNet-5 ([LeCun
-98](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf)) because it showed to
-be working on similar objects: digits classification. Instead of digits, we have
-signs for which I cannot find any good reason why it would not work, *a priori*.
-We tried various configurations, including changing activation functions,
-concatenating layer 1 and layer 2 outputs as described in [Sermanet Ijcnn
-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), various
-learning rates, introducing new layers, etc. Eventually, time ran out and we
-settled with just LeNet-5 and deeper layers. A dropout has been added in between
-the last two fully connected layers in an attempt to increase the model accuracy
-on test data, but it did not change much.
+98](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf)) evolved using ideas
+from
+ [sermanet-ijcnn-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf),
+because it showed to be working on similar objects: digits classification.
+Instead of digits, we have signs for which I cannot find any good reason why it
+would not work, *a priori*.
 
-We obtained an accuracy of 94% on the validating set and 4% on the testing set.
-This terrible overfitting was obtained by first getting the preprocessing
-“right”: keeping the colours made training relatively slower and less accurate.
-It gave us the kind of vectors the model should process, i.e. 32x32x1 not
-32x32x3. It also fitted the LeNet-5 assumptions. Training the LeNet-5 model gave
-encouraging results yet, under 93% accuracy on the validating set. Also, the
-number of epochs (20) is probably too high and is a cause of overfitting. As
-noted above, augmenting the datasets to be more even would probably have the
-greatest impact on the model overall performance.
+We first started
+with [LetNet-5](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) and data
+re-splitted across training, validation and test into 70%, 20% and 10% of whole
+data respectively. The 93.8% accuracy on the test set gave us reasons to
+continue to invest time into improving its performance.
 
-We then searched to increase the accuracy on the validation set by changing the
-learning rate, epsilon, making the network deeper and wider (i.e. adding layers
-and parameters) and by mimicking the architecture found in  [Sermanet Ijcnn
-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), i.e.
-concatenating the output of layer 1 and layer 2 to the first fully connected
-layer. I also tried average pooling to take advantage of the locality of the
-data, but it gave worse results!
+Grayscaling the images led to a 1.2% improvement up to 95.0% accuracy on the
+test set. Centering the pixels values around 0 lead to a 1.3% improvement up to
+96.3% accuracy on the test set. Making the distribution of training images even
+across classes lead to a 1.3% improvement up to 97.3% accuracy on the test set.
+We flattened and concatenated the outputs of the all convolutional layers into
+the first fully connected layer as done
+in [sermanet-ijcnn-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf),
+augmented the number of epochs and divided the learning rate by augmenting the
+size of the batches up to 512 for a 0.8% increase up to 98.4% accuracy on the
+test set. We added the a dropout layer in between the fully connected layers of
+a 0.3% accuracy increase up to 98.7% accuracy on the test set. We added a 1x1
+convolutional layer at the beginning of the network and increased the depth of
+all layers, increased the batch size up to 1024 to have a lower learning rate
+and augmented the number of epochs to 30 for a 0.3% accuracy increase up to
+99.0% accuracy on the test set.
 
-I tried to train “mini-models” i.e. one model per class with a binary output and
-then combining them into a bigger network that was supposed to classify over 43
-classes, but it did not work out. Also, it takes advantage of the structure of
-the data *a priori*, i.e. we have 43 classes, which is a loss in generality and
-multiply the number of parameters and training by the number of sub models. I
-ran out of time before going further down that road.
+ 
 
-Nothing really worked as well as just making the network deeper. As noted in the
-[Sermanet Ijcnn 11] paper, even by understanding that the network uses each
-columns in the weights matrices to identify features in inputs, it is mainly
-experimental to find a good architecture and parameters, i.e. educated trial and
-errors. I exhausted the time I could spend searching for a better architecture
-and settled on the one that worked best.
+Training
+--------
 
-### Training
+[Practical Recommendations for Gradient-Based Training of Deep
+Architectures](https://arxiv.org/pdf/1206.5533.pdf) gives this formula that
+helps understanding how `batch_size` and `learning_rate` are related:
 
-[Kingma et al., 2014](https://arxiv.org/abs/1412.6980) make it clear that Adam
-algorithm is targeted at stochastic gradient-based optimization within
-conditions that match ours. It also compares favorably to other algorithms
-available in TensorFlow. Considering our timing window, there is no point into
-searching further. Trial and error gave us the learning rate (0.001) and epsilon
-(10\^(-10)).
+![](img/formula.png)
 
-Since we had access to an AWS EC2 g2.2xlarge instance, we used 20 epochs and a
-batch size of 256. Bigger batches did not gave us better results. The loss
-function of the model is measured using a softmax over the output logits
-followed by the mean of the cross entropy for each batch.
+The bigger the batch (**B**), the lower the resulting `learning_rate`. A bigger
+batch also means a bigger region of the cost function that is optimized at each
+batch. For this reason, we prefered to increase the `batch_size` as long as the
+time/space performance where acceptable during the trial and error phase. The
+smaller the learning rate, the higher the number of epochs to compensate the
+smaller steps and avoiding getting stuck into a local minimum. Too many epochs
+and we are at risk of overfitting: the network learns the data set instead of
+how to generalize it. We just don't train past a certain amount of epochs when
+we see that the accuracy does not improve anymore.
 
-### Test On New Images
+[Adam: A Method for Stochastic
+Optimization](https://arxiv.org/abs/1412.6980) makes a great case for using
+the `AdamOptimizer` instead of others.
+
+ 
+
+>   6.3 EXPERIMENT: CONVOLUTIONAL NEURAL NETWORKS
+
+>   We show the effectiveness of Adam in deep CNNs. Our CNN architecture has
+>   three alternating stages of 5x5 convolution filters and 3x3 max pooling with
+>   stride of 2 that are followed by a fully connected layer of 1000 rectified
+>   linear hidden units (ReLU’s). The input image are pre-processed by
+>   whitening, and dropout noise is applied to the input layer and fully
+>   connected layer.
+
+>   Interestingly, although both Adam and Adagrad make rapid progress lowering
+>   the cost in the initial stage of the training, shown in Figure 3 (left),
+>   Adam and SGD eventually converge considerably faster than Adagrad for CNNs
+>   shown in Figure 3 (right).
+
+ 
+
+Performance
+-----------
+
+We reach 99.0% accuracy on the validation set and 98.9% on the test set which is
+on par with human performance: 98.8%
+([sermanet-ijcnn-11](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf)).
+
+The model is evenly accurate across classes:
+
+![](img/accuracy_per_class.png)
+
+As a reminder, precision compares the number of true positives against true
+positives and false positives. Recall compares the number of false negatives
+against false negatives and true positives. High precision means that when the
+model says that a sign belong to a given class then it has high chances to be
+correct. High recall means that there are low chances for the model to miss
+instances of a given class.
+
+Here are precisions and recalls per classes of the model:
+
+![](img/precision_per_class.png)
+
+![](img/recall_per_class.png)
+
+We see that even if accuracy is even, precision and recall are not. For example,
+class 0 has high recall and low precision. It means that the model identify
+correctly most of the instances belonging to the class 0 (recall) but makes
+relatively more mistakes when predicting that an instance belongs to the class
+0. There is no point making the precision higher by augmenting the number of
+true positives since it’s already high (recall). So the only way to make the
+precision higher is by reducing the number of false positives. It’s equivalent
+to reduce overfitting. Maybe a higher dropout rate would help and/or trying
+different image generation distributions. Or maybe building an other network
+which only job is to double check class 0 predictions?
+
+ 
+
+Test On New Images
+------------------
 
 To test our newly trained shiny and promising model, we took a couple of images
 of German traffic signs outside of the data set. Let's see if the model can make
@@ -206,22 +268,35 @@ Here is what the model believes the images classes are:
 
 Which leads to this classification:
 
-![](./img/new-images-belief-classification.png)
+![](img/new-images-belief-classification.png)
 
-Which leads to an accuracy of 83%: the “wild animals crossing” is wrong but the
-classifier seems pretty sure about itself! The top fives probabilities are
-visible on the probabilities graph. There was no real difficulty *a priori* for
+Which leads to an accuracy of 100%. There was no real difficulty *a priori* for
 the network to classify these signs: no extreme contrast, overlapping
-environment, bad centring, damaged signs, bad weather, etc. Perfect signs, yet
-imperfect classification: I would not feel safe with this classifier running in
-my car! Since the overfitting is so bad, there is no reason for a finer analysis
-before having more promising results: better to invest time into a better
-preprocessing, and trying out other architectures.
+environment, bad centring, damaged signs, bad weather, etc. The new images are
+not numerous nor diverse enough to have any kind of significance: it does not
+mean anything and could even be misleading.
 
-The new images are not numerous nor diverse enough to have any kind of
-significance: it does not mean anything and could even be misleading. The 83%
-accuracy are to be compared with the 4% accuracy on the much bigger and diverse
-testing set and the 94% on the validating set: the model is basically dumb in
-the sense that it does not generalise at all. At best, it works like a
-dictionary, i.e. it overfits the data. Counters measures have been discussed
-above.
+ 
+
+Neural Network's State
+----------------------
+
+As NVIDIA's did in their paper [End-to-End Deep Learning for Self-Driving
+Cars](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) in
+the section Visualization of internal CNN State, let's show the internal state
+of our model. Given the following input image:
+
+![](img/stop.png)
+
+Here are the intermediary representation in the first convolutional layer (after
+the 1x1):
+
+![](img/intermediary.png)
+
+Amazing! The network learned on its own features that matter: we can
+distinctively see features of the signs in the hidden layers. That said, given
+this map of features, how this information can be used to update the model for
+improved performance? E.g. `FeatureMap1` and `FeatureMap5` are almost the same.
+Is that redundancy an assest because it gives more robustness to the model or is
+it a liability in the sense that the model could do equally good without this
+redundancy?
