@@ -43,9 +43,6 @@ Data Set Summary & Exploration
 
 ![](img/images_in_class.png)
 
- 
-
- 
 
 Preprocessing
 -------------
@@ -124,7 +121,6 @@ the one above:
 
 ![](img/even_distribution.png)
 
- 
 
 Model
 -----
@@ -161,7 +157,6 @@ all layers, increased the batch size up to 1024 to have a lower learning rate
 and augmented the number of epochs to 30 for a 0.3% accuracy increase up to
 99.0% accuracy on the test set.
 
- 
 
 Training
 --------
@@ -186,7 +181,7 @@ we see that the accuracy does not improve anymore.
 Optimization](https://arxiv.org/abs/1412.6980) makes a great case for using
 the `AdamOptimizer` instead of others.
 
- 
+
 
 >   6.3 EXPERIMENT: CONVOLUTIONAL NEURAL NETWORKS
 
@@ -202,7 +197,7 @@ the `AdamOptimizer` instead of others.
 >   Adam and SGD eventually converge considerably faster than Adagrad for CNNs
 >   shown in Figure 3 (right).
 
- 
+
 
 Performance
 -----------
@@ -239,7 +234,6 @@ to reduce overfitting. Maybe a higher dropout rate would help and/or trying
 different image generation distributions. Or maybe building an other network
 which only job is to double check class 0 predictions?
 
- 
 
 Test On New Images
 ------------------
@@ -276,7 +270,6 @@ environment, bad centring, damaged signs, bad weather, etc. The new images are
 not numerous nor diverse enough to have any kind of significance: it does not
 mean anything and could even be misleading.
 
- 
 
 Neural Network's State
 ----------------------
