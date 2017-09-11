@@ -184,14 +184,14 @@ the `AdamOptimizer` instead of others.
 
 
 >   6.3 EXPERIMENT: CONVOLUTIONAL NEURAL NETWORKS
-
+>
 >   We show the effectiveness of Adam in deep CNNs. Our CNN architecture has
 >   three alternating stages of 5x5 convolution filters and 3x3 max pooling with
 >   stride of 2 that are followed by a fully connected layer of 1000 rectified
 >   linear hidden units (ReLU’s). The input image are pre-processed by
 >   whitening, and dropout noise is applied to the input layer and fully
 >   connected layer.
-
+>
 >   Interestingly, although both Adam and Adagrad make rapid progress lowering
 >   the cost in the initial stage of the training, shown in Figure 3 (left),
 >   Adam and SGD eventually converge considerably faster than Adagrad for CNNs
